@@ -34,8 +34,7 @@ namespace RsaSecureToken
     {
         public string GetPassword(string account)
         {
-            var result = Context.GetPassword(account);
-            return result;
+            return Context.GetPassword(account);
         }
     }
 
