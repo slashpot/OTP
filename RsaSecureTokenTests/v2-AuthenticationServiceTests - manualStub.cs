@@ -15,10 +15,10 @@ namespace RsaSecureToken.Tests
         [TestMethod()]
         public void IsValidTest()
         {
-            IProfile fakeProfile = Substitute.For<IProfile>();
+            var fakeProfile = Substitute.For<IProfile>();
             fakeProfile.GetPassword("joey").Returns("91");
 
-            IToken fakeToken = Substitute.For<IToken>();
+            var fakeToken = Substitute.For<IToken>();
             fakeToken.GetRandom("").ReturnsForAnyArgs("000000");
 
             var target = new AuthenticationService(fakeProfile, fakeToken);
