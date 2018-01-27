@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RsaSecureToken;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace RsaSecureToken.Tests
 {
     [TestClass()]
@@ -13,12 +8,22 @@ namespace RsaSecureToken.Tests
         [TestMethod()]
         public void IsValidTest()
         {
-            var target = new AuthenticationService();
+            IProfile profile = new ProfileDao();
+            IToken token = new TestToken();
 
+            var target = new AuthenticationService(profile, token);
             var actual = target.IsValid("joey", "91000000");
 
             //always failed
-            Assert.IsTrue(actual);                       
+            Assert.IsTrue(actual);
+        }
+    }
+
+    public class TestToken : IToken
+    {
+        public string GetRandom(string account)
+        {
+            return "000000";
         }
     }
 }

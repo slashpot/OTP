@@ -5,32 +5,48 @@ namespace RsaSecureToken
 {
     public class AuthenticationService
     {
-        public bool IsValid(string account, string password)
+        private IProfile _profileDao;
+        private IToken _rsaToken;
+
+        public AuthenticationService(IProfile profile, IToken token)
+        {
+            _profileDao = profile;
+            _rsaToken = token;
+        }
+
+        public AuthenticationService()
+        {
+            _profileDao = new ProfileDao();
+            _rsaToken = new RsaTokenDao();
+        }
+
+        public bool IsValid(string account, string passCode)
         {
             // 根據 account 取得自訂密碼
-            var profileDao = new ProfileDao();
-            var passwordFromDao = profileDao.GetPassword(account);
+            var passwordFromDao = _profileDao.GetPassword(account);
 
             // 根據 account 取得 RSA token 目前的亂數
-            var rsaToken = new RsaTokenDao();
-            var randomCode = rsaToken.GetRandom(account);
+            var randomCode = _rsaToken.GetRandom(account);
 
-            // 驗證傳入的 password 是否等於自訂密碼 + RSA token亂數
-            var validPassword = passwordFromDao + randomCode;
-            var isValid = password == validPassword;
+            // 驗證傳入的 passCode 是否等於自訂密碼 + RSA token亂數
+            var validPasscode = passwordFromDao + randomCode;
+            var isValid = passCode == validPasscode;
 
-            if (isValid)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return isValid;
         }
     }
 
-    public class ProfileDao
+    public interface IToken
+    {
+        string GetRandom(string account);
+    }
+
+    public interface IProfile
+    {
+        string GetPassword(string account);
+    }
+
+    public class ProfileDao : IProfile
     {
         public string GetPassword(string account)
         {
@@ -55,7 +71,7 @@ namespace RsaSecureToken
         }
     }
 
-    public class RsaTokenDao
+    public class RsaTokenDao : IToken
     {
         public string GetRandom(string account)
         {
