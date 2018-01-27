@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RsaSecureToken;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+
 namespace RsaSecureToken.Tests
 {
     [TestClass()]
     public class AuthenticationServiceTests
-    {        
+    {
         //tips: 傳入 stub 物件的多種方式，可參考：http://www.dotblogs.com.tw/hatelove/archive/2012/11/27/learning-tdd-in-30-days-day6-several-ways-to-isolate-object-dependency-and-easy-for-testing.aspx
         // 1. 透過 target 的 constructor 傳入 interface/abstract 的 instance (DI auto-wiring)
         // 2. 透過 target 的 public property 傳入 (DI auto-wiring)
@@ -19,12 +15,17 @@ namespace RsaSecureToken.Tests
         [TestMethod()]
         public void IsValidTest()
         {
-            var target = new AuthenticationService();
+            IProfile fakeProfile = Substitute.For<IProfile>();
+            fakeProfile.GetPassword("joey").Returns("91");
 
+            IToken fakeToken = Substitute.For<IToken>();
+            fakeToken.GetRandom("").ReturnsForAnyArgs("000000");
+
+            var target = new AuthenticationService(fakeProfile, fakeToken);
             var actual = target.IsValid("joey", "91000000");
 
             //always failed
-            Assert.IsTrue(actual);                       
+            Assert.IsTrue(actual);
         }
     }
 }

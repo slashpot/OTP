@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RsaSecureToken.Tests
 {
@@ -8,7 +9,7 @@ namespace RsaSecureToken.Tests
         [TestMethod()]
         public void IsValidTest()
         {
-            IProfile profile = new ProfileDao();
+            IProfile profile = new TestProfile();
             IToken token = new TestToken();
 
             var target = new AuthenticationService(profile, token);
@@ -16,6 +17,18 @@ namespace RsaSecureToken.Tests
 
             //always failed
             Assert.IsTrue(actual);
+        }
+    }
+
+    public class TestProfile : IProfile
+    {
+        public string GetPassword(string account)
+        {
+            if (account == "joey")
+            {
+                return "91";
+            }
+            throw new InvalidOperationException();
         }
     }
 
